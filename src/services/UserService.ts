@@ -19,15 +19,29 @@ class UserService {
   ];
 
   static getUser(): User {
+    if (!this.users.length) {
+      throw new Error("No users available.");
+    }
     return this.users[0];
   }
 
   static getUsersWithoutAdmin(): User[] {
-    return this.users.filter(user => user.role !== Role.Admin)
+    return this.users.filter((user) => user.role !== Role.Admin);
   }
 
   static getUsers(): User[] {
     return this.users;
+  }
+
+  static getUserById(id: string): User | null {
+    return this.users.find((u) => u.id === id) || null;
+  }
+
+  static validateUserData() {
+    const ids = this.users.map((u) => u.id);
+    if (ids.length !== new Set(ids).size) {
+      throw new Error("Duplicate user IDs found.");
+    }
   }
 }
 

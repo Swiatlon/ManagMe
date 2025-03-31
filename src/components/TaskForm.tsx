@@ -7,6 +7,16 @@ import StoryService from "../services/StoryService";
 import TaskService, { Task, TaskPriority, TaskStatus } from "../services/TaskService";
 import UserService from "../services/UserService";
 
+interface TaskFormData {
+  name: string;
+  description: string;
+  priority: TaskPriority;
+  storyId: string;
+  estimatedHours: number;
+  assignedUserId?: string | null;
+  status: TaskStatus;
+}
+
 interface TaskFormProps {
   open: boolean;
   onClose: () => void;
@@ -22,6 +32,8 @@ const schema = Yup.object({
   estimatedHours: Yup.number().min(1, "Estimated hours must be at least 1").required("Estimated hours are required."),
   assignedUserId: Yup.string().nullable(),
   status: Yup.mixed<TaskStatus>().oneOf(Object.values(TaskStatus)).required(),
+  startDate: Yup.string().nullable(),
+  endDate: Yup.string().nullable(),
 });
 
 export default function TaskForm({ open, onClose, task, onSave }: TaskFormProps) {
@@ -41,6 +53,8 @@ export default function TaskForm({ open, onClose, task, onSave }: TaskFormProps)
       estimatedHours: 0,
       assignedUserId: null,
       status: TaskStatus.Todo,
+      startDate: null,
+      endDate: null,
     },
   });
 
@@ -50,10 +64,28 @@ export default function TaskForm({ open, onClose, task, onSave }: TaskFormProps)
   const status = watch("status");
 
   useEffect(() => {
+    if (task) {
+      setValue("name", task.name);
+      setValue("description", task.description);
+      setValue("priority", task.priority);
+      setValue("storyId", task.storyId);
+      setValue("estimatedHours", task.estimatedHours);
+      setValue("assignedUserId", task.assignedUserId);
+      setValue("status", task.status);
+    }
+  }, [task, setValue]);
+
+  useEffect(() => {
+    if (status === TaskStatus.Done) {
+      return;
+    }
+
+    if (!assignedUserId) {
+      setValue("status", TaskStatus.Todo);
+    }
+
     if (assignedUserId) {
       setValue("status", TaskStatus.Doing);
-    } else if (status === TaskStatus.Doing) {
-      setValue("status", TaskStatus.Todo);
     }
   }, [assignedUserId, status, setValue]);
 
@@ -63,24 +95,29 @@ export default function TaskForm({ open, onClose, task, onSave }: TaskFormProps)
     }
   }, [status, setValue]);
 
-  const onSubmit = (data: any) => {
-    const isNewTask = !task;
-    const taskData = {
-      ...data,
-      id: isNewTask ? Date.now().toString() : task.id,
-      createdAt: isNewTask ? new Date().toISOString() : task.createdAt,
-      startDate: data.assignedUserId && isNewTask ? new Date().toISOString() : task?.startDate || null,
-      endDate: task?.status === TaskStatus.Done ? new Date().toISOString() : null,
-    };
+  const onSubmit = async (data: TaskFormData) => {
+      try {
+        const isNewTask = !task;
 
-    if (task) {
-      TaskService.updateTask(taskData);
-    } else {
-      TaskService.addTask(taskData);
-    }
+        const taskData = {
+          ...data,
+          id: isNewTask ? Date.now().toString() : task.id,
+          createdAt: isNewTask ? new Date().toISOString() : task.createdAt,
+          startDate: data.assignedUserId && isNewTask ? new Date().toISOString() : task?.startDate || undefined,
+          endDate: data.status === TaskStatus.Done ? new Date().toISOString() : task?.endDate || undefined,
+        };
 
-    onSave();
-    onClose();
+        if (task) {
+          TaskService.updateTask(taskData);
+        } else {
+          TaskService.addTask(taskData);
+        }
+
+        onSave();
+        onClose();
+      } catch (error) {
+        console.error("Failed to save task:", error);
+      }
   };
 
   return (

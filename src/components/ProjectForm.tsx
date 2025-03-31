@@ -38,14 +38,18 @@ export default function ProjectForm({ open, onClose, project, onSave }: ProjectF
     }
   }, [project, setValue]);
 
-  const onSubmit = (data: any) => {
-    if (project) {
-      ProjectService.updateProject({ ...project, ...data });
-    } else {
-      ProjectService.addProject({ id: Date.now().toString(), ...data });
+  const onSubmit = async (data: { name: string; description: string }) => {
+    try {
+      if (project) {
+        ProjectService.updateProject({ ...project, ...data });
+      } else {
+        ProjectService.addProject({ id: Date.now().toString(), ...data });
+      }
+      onSave();
+      onClose();
+    } catch (error) {
+      console.error("Failed to save project:", error);
     }
-    onSave();
-    onClose();
   };
 
   return (

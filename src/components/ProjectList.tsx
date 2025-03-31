@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, TextField, Box, Container } from "@mui/material";
+import { Button, Box, Container } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import ProjectService, { Project } from "../services/ProjectService";
 import StoryService from "../services/StoryService";
@@ -11,14 +11,16 @@ export default function ProjectList() {
   const [editProject, setEditProject] = useState<Project | null>(null);
 
   const handleAdd = () => {
-    setEditProject(null);  // Reset for adding new project
+    setEditProject(null);
     setOpenModal(true);
   };
 
   const handleDelete = (id: string) => {
-    ProjectService.deleteProject(id);
-    StoryService.deleteStoriesByProject(id);
-    setProjects(ProjectService.getProjects());
+    if (window.confirm("Are you sure you want to delete this project?")) {
+      ProjectService.deleteProject(id);
+      StoryService.deleteStoriesByProject(id);
+      setProjects(ProjectService.getProjects());
+    }
   };
 
   const handleEdit = (project: Project) => {
@@ -67,7 +69,7 @@ export default function ProjectList() {
         sx={{ width: "100%", height: "80vh" }}
       />
 
-      <ProjectForm open={openModal} onClose={() => setOpenModal(false)} project={editProject} onSave={handleSave} />
+      {openModal && <ProjectForm open={openModal} onClose={() => setOpenModal(false)} project={editProject} onSave={handleSave} />}
     </Container>
   );
 }

@@ -7,6 +7,15 @@ import StoryService, { Priority, Status, Story } from "../services/StoryService"
 import ProjectService from "../services/ProjectService";
 import UserService from "../services/UserService";
 
+interface StoryFormData {
+  name: string;
+  description: string;
+  priority: Priority;
+  status: Status;
+  projectId: string;
+  ownerId: string;
+}
+
 interface StoryFormProps {
   open: boolean;
   onClose: () => void;
@@ -20,7 +29,7 @@ const schema = Yup.object({
   priority: Yup.mixed<Priority>().oneOf([Priority.Low, Priority.Medium, Priority.High]).required("Priority is required."),
   status: Yup.mixed<Status>().oneOf([Status.Todo, Status.Doing, Status.Done]).required("Status is required."),
   projectId: Yup.string().required("Project selection is required."),
-  ownerId: Yup.string()
+  ownerId: Yup.string().required("Owner ID is required."),
 });
 
 export default function StoryForm({ open, onClose, story, onSave }: StoryFormProps) {
@@ -53,22 +62,26 @@ export default function StoryForm({ open, onClose, story, onSave }: StoryFormPro
     }
   }, [story, setValue]);
 
-  const onSubmit = (data: any) => {
-    const storyData = {
-      ...data,
-      id: story ? story.id : Date.now().toString(),
-      createdAt: story ? story.createdAt : new Date().toISOString(),
-      ownerId: UserService.getUser().id,
-    };
+  const onSubmit = async (data: StoryFormData) => {
+    try {
+      const storyData = {
+        ...data,
+        id: story ? story.id : Date.now().toString(),
+        createdAt: story ? story.createdAt : new Date().toISOString(),
+        ownerId: UserService.getUser().id,
+      };
 
-    if (story) {
-      StoryService.updateStory(storyData);
-    } else {
-      StoryService.addStory(storyData);
+      if (story) {
+        StoryService.updateStory(storyData);
+      } else {
+        StoryService.addStory(storyData);
+      }
+
+      onSave();
+      onClose();
+    } catch (error) {
+      console.error("Failed to save story:", error);
     }
-
-    onSave();
-    onClose();
   };
 
   return (
