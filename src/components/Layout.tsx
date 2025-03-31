@@ -35,6 +35,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <ListItemButton component={Link} to="/stories">
             <ListItemText primary="Stories" />
           </ListItemButton>
+
+          <ListItemButton component={Link} to="/tasks">
+            <ListItemText primary="Tasks" />
+          </ListItemButton>
         </List>
       </Drawer>
       <Box sx={{ flexGrow: 1, p: 0 }}>
