@@ -1,13 +1,27 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { BrowserRouter } from 'react-router-dom'
-import App from './App.tsx'
-import "./style.css"
+/// <reference types="vite-plugin-svgr/client" />
+import { StrictMode } from 'react';
+import { Provider } from 'react-redux';
+import { RouterProvider } from 'react-router-dom';
+import CssBaseline from '@mui/material/CssBaseline';
+import { StyledEngineProvider, ThemeProvider } from '@mui/material/styles';
+import SnackbarConfig from './configs/snackbar/SnackbarConfig';
+import ReactDOM from 'react-dom/client';
+import { store } from './redux/store';
+import { router } from './routes/Router';
+import theme from './theme/theme';
+import './assets/styles/app.scss';
 
-createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </StrictMode>,
-)
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <StyledEngineProvider injectFirst>
+          <CssBaseline />
+          <SnackbarConfig>
+              <RouterProvider router={router} />
+          </SnackbarConfig>
+        </StyledEngineProvider>
+      </ThemeProvider>
+    </Provider>
+  </StrictMode>
+);

@@ -1,0 +1,22 @@
+* {
+  font-family: 'Lato', sans-serif;
+}
+
+#root {
+  background-color: #f2f6f9;
+  min-height: 100vh;
+  display: grid;
+  contain: paint;
+  color: #070707;
+}
+
+// OVVERIDE PACKAGES
+
+.MuiDivider-root {
+  background: white;
+}
+
+.MuiPaper-root {
+  border-radius: 4px;
+}
+
