@@ -161,7 +161,7 @@ export default function StoryForm({ open, onClose, story, onSave, currentUserId,
     >
       <Box sx={modalStyle} onKeyDown={handleKeyDown}>
         <Typography id="story-form-title" variant="h5" component="h2" sx={{ mb: 3 }}>
-          {isEditMode ? 'Edit User Story' : 'Create New User Story'}
+          {isEditMode ? 'Edit Story' : 'Create Story'}
         </Typography>
 
         {submitError && (
