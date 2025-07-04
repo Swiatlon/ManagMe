@@ -25,6 +25,7 @@ export default function StoryFilters({ filters, setFilters, projects }: Props) {
       <FormControl sx={{ minWidth: 200 }}>
         <InputLabel>Select Project</InputLabel>
         <Select
+          data-cy="project-filter"
           value={filters.project}
           onChange={(e) => setFilters({ ...filters, project: e.target.value })}
           label="Select Project"
@@ -42,6 +43,7 @@ export default function StoryFilters({ filters, setFilters, projects }: Props) {
       <FormControl sx={{ minWidth: 150 }}>
         <InputLabel>Status</InputLabel>
         <Select
+         data-cy="story-status"
           value={filters.status}
           onChange={(e) => setFilters({ ...filters, status: e.target.value })}
           label="Status"
@@ -56,7 +58,7 @@ export default function StoryFilters({ filters, setFilters, projects }: Props) {
 
       {(filters.project || filters.status) && (
         <Tooltip title="Clear filters">
-          <IconButton onClick={clearFilters} color="primary">
+          <IconButton data-cy="clear-filters" onClick={clearFilters} color="primary">
             <Clear />
           </IconButton>
         </Tooltip>

@@ -24,8 +24,9 @@ export default function StoryList() {
   const filteredStories = useMemo(() => {
     return stories.filter((story) => {
       const matchProject = story?.project?.id === filters?.project;
+      const matchStatus = filters.status ? story.status === filters.status : true;
 
-      return matchProject;
+      return matchProject && matchStatus;
     });
   }, [stories, filters]);
 

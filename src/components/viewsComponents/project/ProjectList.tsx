@@ -81,6 +81,7 @@ export default function ProjectList() {
         <Box sx={{ display: "flex", gap: 1 }}>
           <Tooltip title="Edit project">
             <IconButton
+            data-cy="edit-project"
               color="primary"
               onClick={() => handleEdit(params.row)}
               size="small"

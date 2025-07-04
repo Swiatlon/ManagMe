@@ -25,6 +25,7 @@ function MenuItemComponent({ item, onToggleSubmenu, isOpen, isChildren, onNaviga
         component={NavLink}
         to={item.linkTo}
         className={className}
+        data-cy={item.text}
         onClick={() => {
           onNavigate();
         }}

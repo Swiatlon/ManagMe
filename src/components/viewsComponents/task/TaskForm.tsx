@@ -2,7 +2,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Modal, Box, TextField, FormControl, InputLabel, Select, MenuItem, FormHelperText, Button } from "@mui/material";
 import { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { Role, Status, TaskPriority, TaskStatus } from "../../../contract/enums";
+import { Role, TaskPriority, TaskStatus } from "../../../contract/enums";
 import { useGetAllStoriesQuery } from "../../../redux/apiSlices/stories.api.slices";
 import { useCreateTaskMutation, useUpdateTaskMutation } from "../../../redux/apiSlices/tasks.api.slice";
 import { useGetAllUsersQuery } from "../../../redux/apiSlices/users.api.slice";
@@ -27,7 +27,6 @@ interface TaskFormProps {
   task?: ITask | null;
   onSave: () => void;
 }
-
 
 export default function TaskForm({ open, onClose, task, onSave }: TaskFormProps) {
   const {
@@ -98,12 +97,15 @@ export default function TaskForm({ open, onClose, task, onSave }: TaskFormProps)
       if (isNew) {
         await addTask(payload).unwrap();
       } else {
-        await updateTask({ id:task.id!, data: {
-          ...data,
-          startDate: data.status === TaskStatus.Doing  ? new Date().toISOString() : task?.startDate,
-          endDate: data.status === TaskStatus.Done ? new Date().toISOString() : task?.endDate ?? undefined,
-          assignedUserId: data.assignedUserId || null,
-        } }).unwrap();
+        await updateTask({
+          id: task.id!,
+          data: {
+            ...data,
+            startDate: data.status === TaskStatus.Doing ? new Date().toISOString() : task?.startDate,
+            endDate: data.status === TaskStatus.Done ? new Date().toISOString() : task?.endDate ?? undefined,
+            assignedUserId: data.assignedUserId || null,
+          },
+        }).unwrap();
       }
 
       onSave();
@@ -121,23 +123,44 @@ export default function TaskForm({ open, onClose, task, onSave }: TaskFormProps)
             name="name"
             control={control}
             render={({ field }) => (
-              <TextField {...field} fullWidth label="Task Name" error={!!errors.name} helperText={errors.name?.message} sx={{ mb: 2 }} />
+              <TextField
+                {...field}
+                fullWidth
+                label="Task Name"
+                error={!!errors.name}
+                helperText={errors.name?.message}
+                sx={{ mb: 2 }}
+                inputProps={{ "data-cy": "task-name" }}
+              />
             )}
           />
           <Controller
             name="description"
             control={control}
             render={({ field }) => (
-              <TextField {...field} fullWidth label="Description" error={!!errors.description} helperText={errors.description?.message} sx={{ mb: 2 }} />
+              <TextField
+                {...field}
+                fullWidth
+                label="Description"
+                error={!!errors.description}
+                helperText={errors.description?.message}
+                sx={{ mb: 2 }}
+                inputProps={{ "data-cy": "task-description" }}
+              />
             )}
           />
           <FormControl fullWidth sx={{ mb: 2 }} error={!!errors.priority}>
-            <InputLabel>Priority</InputLabel>
+            <InputLabel id="priority-label">Priority</InputLabel>
             <Controller
               name="priority"
               control={control}
               render={({ field }) => (
-                <Select {...field} label="Priority">
+                <Select
+                  {...field}
+                  labelId="priority-label"
+                  label="Priority"
+                  data-cy="task-priority"
+                >
                   <MenuItem value={TaskPriority.Low}>Low</MenuItem>
                   <MenuItem value={TaskPriority.Medium}>Medium</MenuItem>
                   <MenuItem value={TaskPriority.High}>High</MenuItem>
@@ -147,14 +170,19 @@ export default function TaskForm({ open, onClose, task, onSave }: TaskFormProps)
             <FormHelperText>{errors.priority?.message}</FormHelperText>
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2 }} error={!!errors.storyId}>
-            <InputLabel>Story</InputLabel>
+            <InputLabel id="story-label">Story</InputLabel>
             <Controller
               name="storyId"
               control={control}
               render={({ field }) => (
-                <Select {...field} label="Story">
+                <Select
+                  {...field}
+                  labelId="story-label"
+                  label="Story"
+                  data-cy="task-story"
+                >
                   {stories.map((story) => (
-                    <MenuItem key={story.id} value={story.id}>
+                    <MenuItem key={story.id} value={story.id} data-cy={story.name}>
                       {story.name}
                     </MenuItem>
                   ))}
@@ -167,19 +195,33 @@ export default function TaskForm({ open, onClose, task, onSave }: TaskFormProps)
             name="estimatedHours"
             control={control}
             render={({ field }) => (
-              <TextField {...field} type="number" fullWidth label="Estimated Hours" error={!!errors.estimatedHours} helperText={errors.estimatedHours?.message} sx={{ mb: 2 }} />
+              <TextField
+                {...field}
+                type="number"
+                fullWidth
+                label="Estimated Hours"
+                error={!!errors.estimatedHours}
+                helperText={errors.estimatedHours?.message}
+                sx={{ mb: 2 }}
+                data-cy='task-estimated-hours'
+              />
             )}
           />
           <FormControl fullWidth sx={{ mb: 2 }}>
-            <InputLabel>Assigned User</InputLabel>
+            <InputLabel id="assigned-user-label">Assigned User</InputLabel>
             <Controller
               name="assignedUserId"
               control={control}
               render={({ field }) => (
-                <Select {...field} label="Assigned User">
+                <Select
+                  {...field}
+                  labelId="assigned-user-label"
+                  label="Assigned User"
+                  data-cy={'task-assigned-user'}
+                >
                   <MenuItem value="">Unassigned</MenuItem>
                   {filteredUsers.map((user) => (
-                    <MenuItem key={user.id} value={user.id}>
+                    <MenuItem key={user.id} value={user.id}  data-cy={'task-assigned-user-item'}>
                       {user.firstName} {user.lastName}
                     </MenuItem>
                   ))}
@@ -188,12 +230,17 @@ export default function TaskForm({ open, onClose, task, onSave }: TaskFormProps)
             />
           </FormControl>
           <FormControl fullWidth sx={{ mb: 2 }} error={!!errors.status}>
-            <InputLabel>Status</InputLabel>
+            <InputLabel id="status-label">Status</InputLabel>
             <Controller
               name="status"
               control={control}
               render={({ field }) => (
-                <Select {...field} label="Status">
+                <Select
+                  {...field}
+                  labelId="status-label"
+                  label="Status"
+                  data-cy='task-status'
+                >
                   <MenuItem value={TaskStatus.Todo}>To Do</MenuItem>
                   <MenuItem value={TaskStatus.Doing} disabled={!assignedUserId}>
                     Doing {assignedUserId ? "" : "(assign user first)"}
@@ -204,7 +251,7 @@ export default function TaskForm({ open, onClose, task, onSave }: TaskFormProps)
             />
             <FormHelperText>{errors.status?.message}</FormHelperText>
           </FormControl>
-          <Button type="submit" variant="contained" fullWidth>
+          <Button type="submit" variant="contained" fullWidth data-cy="create-task">
             Save Task
           </Button>
         </form>

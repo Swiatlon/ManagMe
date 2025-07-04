@@ -17,7 +17,7 @@ export default function StoryHeader({ selectedProjectName, onAdd }: Props) {
           </Typography>
         )}
       </Typography>
-      <Button variant="contained" onClick={onAdd} startIcon={<Add />} sx={{ px: 3, py: 1 }}>
+      <Button variant="contained" data-cy="add-story" onClick={onAdd} startIcon={<Add />} sx={{ px: 3, py: 1 }}>
         Add Story
       </Button>
     </Box>

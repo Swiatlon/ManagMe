@@ -184,6 +184,7 @@ export default function StoryForm({ open, onClose, story, onSave, currentUserId,
                   <TextField
                     {...field}
                     fullWidth
+                    data-cy="story-name"
                     label="Story Name *"
                     error={!!errors.name}
                     helperText={errors.name?.message}
@@ -202,6 +203,7 @@ export default function StoryForm({ open, onClose, story, onSave, currentUserId,
                     {...field}
                     fullWidth
                     label="Story Description"
+                    data-cy="story-description"
                     multiline
                     rows={4}
                     error={!!errors.description}
@@ -221,6 +223,7 @@ export default function StoryForm({ open, onClose, story, onSave, currentUserId,
                     render={({ field }) => (
                       <Select
                         {...field}
+                        data-cy="story-priority"
                         label="Priority *"
                         error={!!errors.priority}
                         disabled={isLoading}
@@ -254,6 +257,7 @@ export default function StoryForm({ open, onClose, story, onSave, currentUserId,
                     render={({ field }) => (
                       <Select
                         {...field}
+                        data-cy="story-status-form"
                         label="Status *"
                         error={!!errors.status}
                         disabled={isLoading}
@@ -276,6 +280,7 @@ export default function StoryForm({ open, onClose, story, onSave, currentUserId,
                   render={({ field }) => {
                     return (
                     <Select
+                     data-cy="story-project"
                       {...field}
                       label="Project *"
                       error={!!errors.projectId}
@@ -312,6 +317,7 @@ export default function StoryForm({ open, onClose, story, onSave, currentUserId,
                   variant="contained"
                   disabled={!isValid || isLoading || projects.length === 0}
                   startIcon={isLoading ? <CircularProgress size={20} /> : null}
+                  data-cy={isEditMode ? 'edit-story' : 'create-story'}
                 >
                   {isLoading
                     ? (isEditMode ? 'Updating...' : 'Creating...')

@@ -134,6 +134,7 @@ export default function ProjectForm({ open, onClose, project, onSave }: ProjectF
                 <TextField
                   {...field}
                   fullWidth
+                  data-cy="name"
                   label="Project Name *"
                   error={!!errors.name}
                   helperText={errors.name?.message}
@@ -153,6 +154,7 @@ export default function ProjectForm({ open, onClose, project, onSave }: ProjectF
                   label="Project Description"
                   multiline
                   rows={4}
+                  data-cy="description"
                   error={!!errors.description}
                   helperText={errors.description?.message}
                   disabled={isLoading}
