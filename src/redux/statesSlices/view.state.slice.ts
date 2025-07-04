@@ -2,7 +2,7 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
 const isDesktop = () => typeof window !== 'undefined' && window.innerWidth > 910;
 
-interface IViewSlice {
+export interface IViewSlice {
   isDrawerOpen: boolean;
 }
 
