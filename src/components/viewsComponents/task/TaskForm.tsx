@@ -52,6 +52,8 @@ export default function TaskForm({ open, onClose, task, onSave }: TaskFormProps)
 
   const { data: stories = [] } = useGetAllStoriesQuery();
   const { data: users = [] } = useGetAllUsersQuery();
+
+  const filteredStories = stories.filter(story => story?.project?.id);
   const filteredUsers = users.filter((u) => u.role !== Role.Admin);
 
   const [addTask] = useCreateTaskMutation();
@@ -181,7 +183,7 @@ export default function TaskForm({ open, onClose, task, onSave }: TaskFormProps)
                   label="Story"
                   data-cy="task-story"
                 >
-                  {stories.map((story) => (
+                  {filteredStories.map((story) => (
                     <MenuItem key={story.id} value={story.id} data-cy={story.name}>
                       {story.name}
                     </MenuItem>

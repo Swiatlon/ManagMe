@@ -32,6 +32,8 @@ export default function TaskList() {
   const [selectedPriority, setSelectedPriority] = useState<TaskPriority | "all">("all");
   const [selectedStory, setSelectedStory] = useState<string | "all">("all");
 
+  const filteredStories = stories.filter(story => story?.project?.id);
+
   const handleAdd = () => {
     setEditTask(null);
     setOpenModal(true);
@@ -77,7 +79,7 @@ export default function TaskList() {
       <TaskHeader onAdd={handleAdd} />
       <TaskFilters
         users={users}
-        stories={stories}
+        stories={filteredStories}
         selectedStatus={selectedStatus}
         selectedUser={selectedUser}
         selectedPriority={selectedPriority}
@@ -97,7 +99,7 @@ export default function TaskList() {
             onDelete={handleDelete}
             onComplete={handleComplete}
             users={users}
-            stories={stories}
+            stories={filteredStories}
             isDeleting={isDeleting}
           />
           <TaskKanban tasks={filteredTasks} users={users} />
